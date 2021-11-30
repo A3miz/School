@@ -1,0 +1,299 @@
+import turtle
+import math
+import pygame
+pygame.init()
+pygame.display.set_mode()
+events = pygame.event.get()
+
+# This raycaster now has different wall hieghts
+
+mymap = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,2,2,2,2,2,2,2,0,0,0,0,2,2,2,2,2,2,2,2],
+  [1,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,2,0,0,0,0,0,0,2],
+  [1,0,0,0,0,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,2],
+  [1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [1,0,0,0,0,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,2],
+  [1,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,2,0,0,0,0,0,0,2],
+  [1,0,0,0,0,2,2,2,2,2,2,2,0,0,0,0,2,2,2,2,2,2,2,2],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+]
+
+mymap2 = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,2,0,2,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,2,0,2,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+]
+
+screen = turtle.Screen()
+screen.bgpic("sky.jpg")
+
+posX = 20
+posY = 12
+dirX = -1
+dirY = 0
+planeX = 0
+planeY = 0.66
+rotSpeed = 9
+w = 450
+h = 300
+x = 0
+
+walk = 150
+
+ree = turtle.Turtle()
+ree.hideturtle()
+ree.pensize(7)
+ree.speed(0)
+ree.penup()
+ree.tracer(0, 0)
+
+sword = turtle.Turtle()
+swd1 = "sword.png"
+screen.addshape(swd1)
+sword.shape(swd1)
+sword.setheading(90)
+sword.setx(30)
+sword.sety(-111)
+
+user = "fdasfas"
+
+while True:
+  x = 0
+  
+  for event in pygame.event.get():
+    if event.type == pygame.KEYDOWN:
+      if event.key == pygame.K_LEFT:
+        olddirX = dirX
+        dirX = dirX * math.cos(math.radians(rotSpeed)) - dirY * math.sin(math.radians(rotSpeed))
+        dirY = olddirX * math.sin(math.radians(rotSpeed)) + dirY * math.cos(math.radians(rotSpeed))
+        oldplaneX = planeX
+        planeX = planeX * math.cos(math.radians(rotSpeed)) - planeY * math.sin(math.radians(rotSpeed))
+        planeY = oldplaneX * math.sin(math.radians(rotSpeed)) + planeY * math.cos(math.radians(rotSpeed))
+        ree.clear()
+        break
+      if event.key == pygame.K_RIGHT:
+        olddirX = dirX
+        dirX = dirX * math.cos(math.radians(-rotSpeed)) - dirY * math.sin(math.radians(-rotSpeed))
+        dirY = olddirX * math.sin(math.radians(-rotSpeed)) + dirY * math.cos(math.radians(-rotSpeed))
+        oldplaneX = planeX
+        planeX = planeX * math.cos(math.radians(-rotSpeed)) - planeY * math.sin(math.radians(-rotSpeed))
+        planeY = oldplaneX * math.sin(math.radians(-rotSpeed)) + planeY * math.cos(math.radians(-rotSpeed))
+        ree.clear()
+        break
+      
+      if event.key == pygame.K_UP:
+        posX += dirX * 0.5
+        posY += dirY * 0.5
+        ree.clear()
+        break
+      
+      if event.key == pygame.K_DOWN:
+        posX -= dirX * 0.5
+        posY -= dirY * 0.5
+        ree.clear()
+        break
+  
+  while x < 600:
+    cameraX = 2 * x / w - 1
+    raydirX = dirX + planeX * cameraX
+    raydirY = dirY + planeY * cameraX
+    
+    mapX = math.floor(posX)
+    mapY = math.floor(posY)
+    
+    sidedistX = 0
+    sidedistY = 0
+    
+    deltadistX = abs(1 / raydirX)
+    deltadistY = abs(1 / raydirY)
+    #print x
+    perpwalldist = 0
+    
+    stepX = 0
+    stepY = 0
+    
+    hit = 0
+    side = 0
+    
+    if raydirX < 0:
+      stepX = -1
+      sidedistX = (posX - mapX) * deltadistX
+    else:
+      stepX = 1
+      sidedistX = (mapX + 1.0 - posX) * deltadistX
+    if raydirY < 0:
+      stepY = -1
+      sidedistY = (posY - mapY) * deltadistY
+    else:
+      stepY = 1
+      sidedistY = (mapY + 1.0 - posY) * deltadistY
+    
+    while hit == 0:
+      if sidedistX < sidedistY:
+        sidedistX += deltadistX
+        mapX += stepX
+        side = 0
+      else:
+        sidedistY += deltadistY
+        mapY += stepY
+        side = 1
+      if (mymap[mapY][mapX] > 0):
+        hit = 1
+    
+    if side == 0:
+      perpwalldist = (mapX - posX + (1 - stepX) / 2) / raydirX
+    else:
+      perpwalldist = (mapY - posY + (1 - stepY) / 2) / raydirY
+    
+    lineheight = math.floor(h / perpwalldist)
+    
+    # 2nd floor_____________________________________________________________________
+    cameraX = 2 * x / w - 1
+    raydirX = dirX + planeX * cameraX
+    raydirY = dirY + planeY * cameraX
+    
+    mapX2 = math.floor(posX)
+    mapY2 = math.floor(posY)
+    
+    sidedistX2 = 0
+    sidedistY2 = 0
+    
+    deltadistX2 = abs(1 / raydirX)
+    deltadistY2 = abs(1 / raydirY)
+    perpwalldist2 = 0
+    
+    stepX2 = 0
+    stepY2 = 0
+    
+    hit2 = 0
+    side2 = 0
+    
+    if raydirX < 0:
+      stepX2 = -1
+      sidedistX2 = (posX - mapX2) * deltadistX2
+    else:
+      stepX2 = 1
+      sidedistX2 = (mapX2 + 1.0 - posX) * deltadistX2
+    if raydirY < 0:
+      stepY2 = -1
+      sidedistY2 = (posY - mapY2) * deltadistY2
+    else:
+      stepY2 = 1
+      sidedistY2 = (mapY2 + 1.0 - posY) * deltadistY2
+    
+    while hit2 == 0:
+      if sidedistX2 < sidedistY2:
+        sidedistX2 += deltadistX2
+        mapX2 += stepX2
+        side2 = 0
+      else:
+        sidedistY2 += deltadistY2
+        mapY2 += stepY2
+        side2 = 1
+      if (mymap2[mapY2][mapX2] > 0 and mymap[mapY2][mapX2] > 0):
+        hit2 = 1
+    
+    if side2 == 0:
+      perpwalldist2 = (mapX2 - posX + (1 - stepX2) / 2) / raydirX
+    else:
+      perpwalldist2 = (mapY2 - posY + (1 - stepY2) / 2) / raydirY
+    
+    lineheight2 = math.floor(h / perpwalldist2) * 3
+    # end 2nd floor__________________________________________________________________
+    
+    drawstart = -lineheight / 2 + h / 2
+    drawend = lineheight / 2 + h / 2
+    # 2nd drawend__________________________
+    drawend2 = lineheight2 / 2 + h / 2
+    # END 2nd drawend______________________
+    
+    if mymap2[mapY2][mapX2] == 1:
+      if side2 == 0:
+        ree.color("blue")
+      elif side2 == 1:
+        ree.color("Mediumblue")
+    elif mymap2[mapY2][mapX2] == 2:
+      if side2 == 0:
+        ree.color("Darkgray")
+      elif side2 == 1:
+        ree.color("Gray")
+    
+    if drawend2 > drawend:
+      ree.setx(x - 240)
+      ree.sety(drawend2 - walk)
+      ree.pendown()
+      ree.sety(drawend - walk)
+      ree.penup()
+    
+    if mymap[mapY][mapX] == 1:
+      if side == 0:
+        ree.color("blue")
+      elif side == 1:
+        ree.color("Mediumblue")
+    elif mymap[mapY][mapX] == 2:
+      if side == 0:
+        ree.color("Darkgray")
+      elif side == 1:
+        ree.color("Gray")
+    
+    ree.setx(x - 240)
+    ree.sety(drawend - walk)
+    ree.pendown()
+    ree.sety(drawstart - walk)
+    ree.color("darkgreen")
+    ree.sety(-200)
+    ree.penup()
+    x += 5
+    
+    if x == 220:
+      x = 220.000001
+  ree.update()
+
+
+
+
+
+
+
+
+
+
+
+
